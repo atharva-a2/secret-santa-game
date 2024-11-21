@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Santa Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+        }
+        main {
+            margin-top: 50px;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        input[type="text"], input[type="email"], input[type="submit"] {
+            padding: 10px;
+            margin: 5px;
+            width: 250px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .assigned-message {
+            margin-top: 30px;
+            font-size: 1.2em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Secret Santa Game</h1>
+</header>
+
+<main>
+    <div id="welcome-message">
+        <p>Welcome to the Secret Santa Game! Enter your name and email to participate.</p>
+        <button onclick="showForm()">Start Game</button>
+    </div>
+
+    <div id="form-container" class="form-container" style="display: none;">
+        <h2>Enter Your Details</h2>
+        <form id="participant-form">
+            <input type="text" id="name" placeholder="Your Name" required><br>
+            <input type="email" id="email" placeholder="Your Email" required><br>
+            <input type="submit" value="Join Game">
+        </form>
+    </div>
+
+    <div id="assigned-message" class="assigned-message" style="display: none;">
+        <p>Check your email for your Secret Santa assignment!</p>
+    </div>
+</main>
+
+<script>
+    let participants = [];
+
+    // Show the form for participant registration
+    function showForm() {
+        document.getElementById("welcome-message").style.display = "none";
+        document.getElementById("form-container").style.display = "block";
+    }
+
+    // Handle form submission to register participants
+    document.getElementById("participant-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+
+        if (name && email) {
+            participants.push({ name, email });
+            alert(`${name}, you've successfully joined the Secret Santa Game!`);
+            document.getElementById("name").value = '';
+            document.getElementById("email").value = '';
+
+            // If all participants are registered, assign Secret Santa
+            if (participants.length >= 2) {
+                assignSecretSanta();
+            }
+        }
+    });
+
+    // Function to assign Secret Santa pairs
+    function assignSecretSanta() {
+        let shuffledParticipants = [...participants];
+        shuffledParticipants = shuffleArray(shuffledParticipants);
+
+        // Prevent self-assignment
+        let assignments = shuffledParticipants.map((participant, index) => {
+            let santa = shuffledParticipants[(index + 1) % shuffledParticipants.length];
+            return { santa: participant, recipient: santa };
+        });
+
+        // Notify the participants (mock email sending)
+        assignments.forEach(assignment => {
+            alert(`Email sent to ${assignment.santa.name}: Your Secret Santa recipient is ${assignment.recipient.name}`);
+        });
+
+        document.getElementById("assigned-message").style.display = "block";
+    }
+
+    // Helper function to shuffle an array
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+</script>
+
+</body>
+</html>
